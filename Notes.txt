@@ -1,0 +1,55 @@
+============
+VCLUSTER
+=============
+
+- With VCluster we can run K8s within K8s.
+- VCluster deploys a fully functional K8s as a Pod with in the host K8s server
+
+GOAL:
+1. Deploy a VCluster K8s server locally on K8s running on K3D
+2. Create an Nginx Ingress resource to access the VCluster K8s server from outside the cluster
+    port-forward nginx controller svc -> Our Ingress -> vcluster service -> vcluster pod (where K8s is running)
+3. Connect to and use the VCluster K8s server
+
+
+INSTALL VCLUSTER CLI
+========================
+>> curl -L -o vcluster "https://github.com/loft-sh/vcluster/releases/latest/download/vcluster-darwin-amd64" && sudo install -c -m 0755 vcluster /usr/local/bin && rm -f vcluster
+
+
+INSTALL NGINX INGRESS CONTROLLER
+=================================
+[With --enable-ssl-passthrough=true flag set]
+
+>>  helm upgrade --install ingress-nginx ingress-nginx \                                                            
+--repo https://kubernetes.github.io/ingress-nginx \
+--namespace ingress-nginx --create-namespace \
+--values ingress-helm-values.yaml
+
+
+INSTALL A VCLUSTER USING HELM
+==============================
+>> helm repo add loft-sh https://charts.loft.sh
+
+>> helm upgrade --install \
+my-vcluster loft-sh/vcluster \
+--namespace vcluster-my-vcluster \
+--create-namespace \
+--values vcluster-helm-values.yaml
+
+
+CREATE AN INGRESS FOR CONNECTING TO VCLUSTER K8s
+====================================================
+>> k apply -f vcluster-ingress.yaml
+
+>> k port-forward -n ingress-nginx svc/ingress-nginx-controller 9443:443
+
+
+CREATE/GENERATE THE KUBECONFIG FILE TO CONNECT TO VCLUSTER K8s
+=================================================================
+vcluster connect my-vcluster -n vcluster-my-vcluster --update-current=false --server=my-vcluster.127.0.0.1.nip.io:9443
+
+
+ACCESS/CONNECT/USE VCLUSTER K8s
+=================================
+k get all -A --kubeconfig ./kubeconfig.yaml

@@ -1,0 +1,7 @@
+syncer:
+  extraArgs:
+    - --tls-san=my-vcluster.127.0.0.1.nip.io
+    
+sync:
+  ingresses:
+    enabled: true
