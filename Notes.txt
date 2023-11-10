@@ -8,7 +8,7 @@ VCLUSTER
 GOAL:
 1. Deploy a VCluster K8s server locally on K8s running on K3D
 2. Create an Nginx Ingress resource to access the VCluster K8s server from outside the cluster
-    port-forward nginx controller svc -> Our Ingress -> vcluster service -> vcluster pod (where K8s is running)
+    [port-forward to nginx controller svc -> Our Ingress -> vcluster service -> vcluster pod (where vcluster K8s server is running)]
 3. Connect to and use the VCluster K8s server
 
 
@@ -21,7 +21,7 @@ INSTALL NGINX INGRESS CONTROLLER
 =================================
 [With --enable-ssl-passthrough=true flag set]
 
->>  helm upgrade --install ingress-nginx ingress-nginx \                                                            
+>> helm upgrade --install ingress-nginx ingress-nginx \
 --repo https://kubernetes.github.io/ingress-nginx \
 --namespace ingress-nginx --create-namespace \
 --values ingress-helm-values.yaml
